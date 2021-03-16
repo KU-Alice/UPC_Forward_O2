@@ -52,7 +52,7 @@ struct UPCForward {
       hSelectionCounter->GetXaxis()->SetBinLabel(i + 1, SelectionCuts[i].Data());
     }
   }
-  void process(join<aod::BCs,Run2BCInfos>::iterator bc, aod::Muons const& tracksMuon)
+  void process(soa::Join<aod::BCs,aod::Run2BCInfos>::iterator const& bc, aod::Muons const& tracksMuon)
   {
     hSelectionCounter->Fill(0);
 
@@ -66,18 +66,18 @@ struct UPCForward {
     uint64_t classIndexMUP = -1;
     Int_t iRunNumber = bc.runNumber();
 
-    if (run==246391 || run==246392) {
+    if (iRunNumber==246391 || iRunNumber==246392) {
       classIndexMUP = 51; //CMUP11
-    } else if (run==246980 || run==246982 || run==246983) {
+    } else if (iRunNumber==246980 || iRunNumber==246982 || iRunNumber==246983) {
       classIndexMUP = 88; //CMUP10
-    } else if (run==245064 || run==245066 || run==245068){
+    } else if (iRunNumber==245064 || iRunNumber==245066 || iRunNumber==245068){
       classIndexMUP=62; //CMUP10
     }
     if (classIndexMUP==-1) {
       return;
     }
     //selecting CMUP10 and CMUP11 events selection
-    bool isMUP11fired = bc.triggerMaskNext50() & (1ull << classIndexMUP-50));
+    bool isMUP11fired = bc.triggerMaskNext50() & (1ull << classIndexMUP-50);
 
     if (!isMUP11fired) {
       return;
@@ -126,9 +126,8 @@ struct UPCForward {
     hPtsingle_muons->Fill(p2.Pt());
   } //end of process
 };
-WorkflowSpec defineDataProcessing(ConfigContext const&)
+WorkflowSpec defineDataProcessing(ConfigContext const& cfgc)
 {
   return WorkflowSpec{
-    adaptAnalysisTask<UPCForward>(
-      "upc-forward")};
+    adaptAnalysisTask<UPCForward>(cfgc, TaskName{"upc-forward"})};
 }
