@@ -10,11 +10,11 @@
 
 /*
 I ran this code using following:
-o2-analysis-timestamp| o2-analysis-upc-forward  --aod-file <path to ao2d.txt> [--isPbPb]  --aod-memory-rate-limit 10000000000 --shm-segment-size 16000000000 -b
+o2-analysis-timestamp| o2-analysis-upc-forward |  o2-analysis-event-selection  --aod-file <path to ao2d.txt> [--isPbPb] -b
 for now AO2D.root I am using is
-/alice/data/2015/LHC15o/000246392/pass5_lowIR/PWGZZ/Run3_Conversion/138_20210129-0800_child_1/0001/AO2D.root
+alien:///alice/data/2015/LHC15o/000246392/pass5_lowIR/PWGZZ/Run3_Conversion/148_20210304-0829_child_1/AOD/001/AO2D.root
 it can be copied using
-alien_cp alien:/alice/data/2015/LHC15o/000246392/pass5_lowIR/PWGZZ/Run3_Conversion/138_20210129-0800_child_1/0001/AO2D.root  file:./
+alien_cp /alice/data/2015/LHC15o/000246392/pass5_lowIR/PWGZZ/Run3_Conversion/148_20210304-0829_child_1/AOD/001/AO2D.root  file:./
 */
 #include "Framework/runDataProcessing.h"
 #include "Framework/AnalysisTask.h"
@@ -56,9 +56,9 @@ struct UPCForward {
     }*/
   }
   // old
-  void process(soa::Join<aod::BCs, aod::Run2BCInfos>::iterator const& bc, aod::Muons const& tracksMuon)
+  //void process(soa::Join<aod::BCs, aod::Run2BCInfos>::iterator const& bc, aod::Muons const& tracksMuon)
  //new
-//  void process(soa::Join<aod::BCs, aod::BcSels>::iterator const& bc, aod::Muons const& tracksMuon)
+  void process(soa::Join<aod::BCs, aod::BcSels>::iterator const& bc, aod::Muons const& tracksMuon)
   {
     registry.fill(HIST("hSelectionCounter"), 0);
 
@@ -93,11 +93,11 @@ struct UPCForward {
     bool isBeamBeamFDC = bc.bbFDC();
     bool isBeamGasFDC  = bc.bgFDC();
 
-    //CCUP10 and CCUP11 information
+    //offline V0 and FD selection
     bool isV0Selection = isBeamBeamV0A || isBeamGasV0A ||isBeamGasV0C;
     bool isFDSelection = isBeamBeamFDA || isBeamGasFDA ||isBeamBeamFDC ||isBeamGasFDC;
 
-
+    //CCUP10 and CCUP11 information
     bool iskMUP11fired = bc.alias()[kMUP11]; //bc.triggerMaskNext50() & (1ull << (classIndexMUP - 50));
     bool iskMUP10fired =  bc.alias()[kMUP10];
 
