@@ -100,7 +100,7 @@ struct UPCForward {
     bool iskMUP11fired = bc.alias()[kMUP11]; //bc.triggerMaskNext50() & (1ull << (classIndexMUP - 50));
     bool iskMUP10fired =  bc.alias()[kMUP10];
 
-    if (!iskMUP11fired) || !iskMUP10fired) {
+    if (!iskMUP11fired || !iskMUP10fired) {
       return;
     }
     registry.fill(HIST("hSelectionCounter"), 1);
