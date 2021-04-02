@@ -105,12 +105,12 @@ struct UPCForward {
     }
     registry.fill(HIST("hSelectionCounter"), 1);
 
-    if (!isV0Selection){
+    if (isV0Selection){
       return;
     }
     registry.fill(HIST("hSelectionCounter"), 2);
 
-    if (!isFDSelection){
+    if (isFDSelection){
       return;
     }
     registry.fill(HIST("hSelectionCounter"), 3);
@@ -136,7 +136,7 @@ struct UPCForward {
     }
     registry.fill(HIST("hSelectionCounter"), 5);
 
-    if (-4 > p1.Eta() > -2.5 || -4 > p2.Eta() > -2.5) {
+    if (-4 < p1.Eta() < -2.5 || -4 < p2.Eta() < -2.5) {
       return;
     }
     registry.fill(HIST("hSelectionCounter"), 6);
