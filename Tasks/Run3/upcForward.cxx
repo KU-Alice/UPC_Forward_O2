@@ -71,7 +71,6 @@ struct UPCForward {
     and 244980, 244982, 244983, 245064, 245066, 245068 for CMUP10*/
   /*  uint64_t classIndexMUP = -1;
     Int_t iRunNumber = bc.runNumber();
-
     if (iRunNumber == 246391 || iRunNumber == 246392) {
       classIndexMUP = 51; //CMUP11
     } else if (iRunNumber == 246980 || iRunNumber == 246982 || iRunNumber == 246983) {
@@ -137,7 +136,7 @@ struct UPCForward {
     }
     registry.fill(HIST("hSelectionCounter"), 5);
 
-    if (-4 < p1.Eta() < -2.5 || -4 < p2.Eta() < -2.5) {
+    if (-4 > p1.Eta() > -2.5 || -4 > p2.Eta() > -2.5) {
       return;
     }
     registry.fill(HIST("hSelectionCounter"), 6);
@@ -155,8 +154,8 @@ struct UPCForward {
     registry.fill(HIST("hPhi"), p.Phi());
     registry.fill(HIST("hEta"), p1.Eta());
     registry.fill(HIST("hEta"), p2.Eta());
-    registry.fill(HIST("hPtsingle"), p1.Pt());
-    registry.fill(HIST("hPtsingle"), p2.Pt());
+    registry.fill(HIST("hPtsingle_muons"), p1.Pt());
+    registry.fill(HIST("hPtsingle_muons"), p2.Pt());
 
   } //end of process
 };
