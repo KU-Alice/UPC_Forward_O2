@@ -145,9 +145,10 @@ void AliAnalysisTaskForwardO2Parallel::UserExec(Option_t *)
     d1.SetPtEtaPhiM(track1->Pt(),track1->Eta(),track1->Phi(),0.1057);
     d2.SetPtEtaPhiM(track2->Pt(),track2->Eta(),track2->Phi(),0.1057);
     p = d1+d2;
-    if (-4 > d1.Eta() > -2.5 || -4 > d2.Eta() > -2.5) {
-      return;
-    }
+    if ( d1.Eta()<-4) {return;}
+    if ( d2.Eta()<-4) {return;}
+    if ( d1.Eta()>-2.5) {return;}
+    if ( d2.Eta()>-2.5) {return;}
     fHistCounter->Fill(4);
 
     if (p.Pt() > 1) {
