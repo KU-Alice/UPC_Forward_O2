@@ -18,14 +18,14 @@
  * empty task which can serve as a starting point for building an analysis
  * as an example, one histogram is filled
  */
-
+#include "iostream"
 #include "TChain.h"
 #include "TH1F.h"
 #include "TList.h"
 #include "AliAnalysisTask.h"
 #include "AliAnalysisManager.h"
 #include "AliESDEvent.h"
-#include "AliESDtrack.h"
+#include "AliESDMuonTrack.h"
 #include "AliESDInputHandler.h"
 #include "AliAnalysisTaskForwardO2Parallel.h"
 #include "TLorentzVector.h"
@@ -108,31 +108,35 @@ void AliAnalysisTaskForwardO2Parallel::UserExec(Option_t *)
     if(!fESD) return;                                   // if the pointer to the event is empty (getting it failed) skip this event
     fHistCounter->Fill(0);
     TString trigger = fESD->GetFiredTriggerClasses();
-    if  (!trigger.Contains("CMUP11")||!trigger.Contains("CMUP10")){
+    //cout << trigger << endl;
+    if  (!trigger.Contains("CMUP11")&&!trigger.Contains("CMUP10")){
       return;
     }
-    fHistCounter->Fill(1);
 
+    fHistCounter->Fill(1);
         // example part: i'll show how to loop over the tracks in an event
         // and extract some information from them which we'll store in a histogram
-    AliESDtrack* track1;
-    AliESDtrack* track2;
+    AliESDMuonTrack* track1;
+    AliESDMuonTrack* track2;
     Int_t trackcounter =0;
-    Int_t iTracks(fESD->GetNumberOfTracks());           // see how many tracks there are in the event
+    Int_t iTracks(fESD->GetNumberOfMuonTracks());           // see how many tracks there are in the event
     for(Int_t i(0); i < iTracks; i++) {                 // loop ove rall these tracks
 
         for(Int_t j=i+1;j < iTracks; j++) {                       // if we failed, skip this track
-          track1 = static_cast<AliESDtrack*>(fESD->GetTrack(i));
-          track2 = static_cast<AliESDtrack*>(fESD->GetTrack(j));
+          track1 = static_cast<AliESDMuonTrack*>(fESD->GetMuonTrack(i));
+          track2 = static_cast<AliESDMuonTrack*>(fESD->GetMuonTrack(j));
 
           trackcounter++;
           //if(trackcounter>1){break;}
         }
     }
-    if (trackcounter != 1) {
+    /*if (trackcounter != 1) {
+      return;
+    }*/
+    cout<< "number of tracks is "<<iTracks<< endl;
+    if (iTracks !=2) {
       return;
     }
-
     fHistCounter->Fill(2);
     if (track1->Charge()*track2->Charge()<=0) {
       return;
@@ -145,9 +149,10 @@ void AliAnalysisTaskForwardO2Parallel::UserExec(Option_t *)
     d1.SetPtEtaPhiM(track1->Pt(),track1->Eta(),track1->Phi(),0.1057);
     d2.SetPtEtaPhiM(track2->Pt(),track2->Eta(),track2->Phi(),0.1057);
     p = d1+d2;
-    if (-4 > d1.Eta() > -2.5 || -4 > d2.Eta() > -2.5) {
-      return;
-    }
+    if ( d1.Eta()<-4) {return;}
+    if ( d2.Eta()<-4) {return;}
+    if ( d1.Eta()>-2.5) {return;}
+    if ( d2.Eta()>-2.5) {return;}
     fHistCounter->Fill(4);
 
     if (p.Pt() > 1) {
